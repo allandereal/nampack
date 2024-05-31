@@ -5,10 +5,10 @@ abstract class RxBase<T> implements Listenable {
 
   T _value;
 
+  @nonVirtual
   T get value => _value;
 
-  @nonVirtual
-  T get valueRaw => _value;
+  T get valueR => _value;
 
   set value(T other) {
     if (_value == other) return;

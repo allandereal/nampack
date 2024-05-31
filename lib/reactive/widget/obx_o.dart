@@ -12,7 +12,7 @@ class ObxO<T> extends StatelessWidget {
   StatelessElement createElement() => _RxOListenerBuilder(rx, this);
 
   @override
-  Widget build(BuildContext context) => builder(rx.valueRaw);
+  Widget build(BuildContext context) => builder(rx.value);
 }
 
 class ObxOContext<T> extends StatelessWidget {
@@ -25,7 +25,7 @@ class ObxOContext<T> extends StatelessWidget {
   StatelessElement createElement() => _RxOListenerBuilder(rx, this);
 
   @override
-  Widget build(BuildContext context) => builder(context, rx.valueRaw);
+  Widget build(BuildContext context) => builder(context, rx.value);
 }
 
 class _RxOListenerBuilder<T> extends StatelessElement {

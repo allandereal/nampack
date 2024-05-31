@@ -113,7 +113,7 @@ extension RxListExtensions<E, Id> on RxListBase<E> {
   }
 
   bool isEqualTo(List<E> q2) {
-    return value.isEqualTo(q2);
+    return valueR.isEqualTo(q2);
   }
 
   /// returns number of items removed.
@@ -150,11 +150,11 @@ extension RxListExtensions<E, Id> on RxListBase<E> {
   }
 
   E? lastWhereEff(bool Function(E e) test, {E? fallback}) {
-    return value.lastWhereEff(test, fallback: fallback);
+    return valueR.lastWhereEff(test, fallback: fallback);
   }
 
   E? firstWhereEff(bool Function(E e) test, {E? fallback}) {
-    return value.firstWhereEff(test, fallback: fallback);
+    return valueR.firstWhereEff(test, fallback: fallback);
   }
 
   void retainWhereAdvanced(bool Function(E element, int index) test, {int? keepIndex}) {

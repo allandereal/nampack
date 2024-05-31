@@ -32,7 +32,7 @@ class _RxBoolLintRule extends DartLintRule {
       if (!hasRxUpdater) return null;
       final rightPart = rightHandSide.operand;
       if (rightPart is PrefixedIdentifier) {
-        if (leftPart.name == rightPart.name || (leftPart.identifier.name == 'value' && rightPart.identifier.name == 'valueRaw')) {
+        if (leftPart.name == rightPart.name || (leftPart.identifier.name == 'value' && rightPart.identifier.name == 'valueR')) {
           return leftPart.prefix.name;
         }
       }
@@ -54,8 +54,7 @@ class _RxBoolLintFix extends DartFix {
   ) {
     context.registry.addAssignmentExpression((node) {
       if (analysisError.sourceRange.intersects(node.sourceRange)) {
-        final changeBuilder = reporter.createChangeBuilder(message: 'Replace with `toggle()`', priority: 22);
-        final changeBuilderAll = reporter.createChangeBuilder(message: 'Replace with `toggle() everywhere in this file`', priority: 21);
+        final changeBuilder = reporter.createChangeBuilder(message: 'Replace with `toggle()`', priority: ObxLintPriority.prefer_rx_toggle.value);
 
         final name = node.beginToken;
         final newSourceRange = node.sourceRange;
@@ -64,13 +63,19 @@ class _RxBoolLintFix extends DartFix {
         changeBuilder.addDartFileEdit((builder) {
           builder.addSimpleReplacement(newSourceRange, "$name$newReplacement");
         });
-        changeBuilderAll.addDartFileEdit((builder) {
-          builder.addSimpleReplacement(newSourceRange, "$name$newReplacement");
-          for (final other in others) {
-            final otherName = other.data as String;
-            builder.addSimpleReplacement(other.sourceRange, "$otherName$newReplacement");
-          }
-        });
+
+        if (others.isNotEmpty) {
+          final changeBuilderAll = reporter.createChangeBuilder(message: 'Replace with `toggle() everywhere in this file`', priority: ObxLintPriority.prefer_rx_toggle_all.value);
+          changeBuilderAll.addDartFileEdit((builder) {
+            builder.addSimpleReplacement(newSourceRange, "$name$newReplacement");
+            final length = others.length;
+            for (int i = 0; i < length; i++) {
+              final other = others[i];
+              final otherName = other.data as String;
+              builder.addSimpleReplacement(other.sourceRange, "$otherName$newReplacement");
+            }
+          });
+        }
       }
     });
   }

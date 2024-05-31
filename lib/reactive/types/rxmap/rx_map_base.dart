@@ -9,13 +9,13 @@ part 'rx_map_extensions.dart';
 abstract class RxMapBase<K, V> extends RxBase<Map<K, V>> with MapMixin<K, V> {
   RxMapBase(super._value);
 
-  Map<K, V> get _value => super.valueRaw;
+  Map<K, V> get _value => super.value;
 
   @override
-  int get length => value.length;
+  int get length => valueR.length;
 
   @override
-  V? operator [](Object? key) => value[key];
+  V? operator [](Object? key) => valueR[key];
 
   @override
   void operator []=(K key, V value) {
@@ -24,7 +24,7 @@ abstract class RxMapBase<K, V> extends RxBase<Map<K, V>> with MapMixin<K, V> {
   }
 
   @override
-  Iterable<K> get keys => value.keys;
+  Iterable<K> get keys => valueR.keys;
 
   @override
   void clear() {

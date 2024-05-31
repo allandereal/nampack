@@ -7,5 +7,5 @@ extension NamReactiveUtils<T> on T {
 }
 
 extension RxBoolUtils<T> on RxBase<bool> {
-  bool toggle() => value = !valueRaw;
+  bool toggle() => value = !value;
 }

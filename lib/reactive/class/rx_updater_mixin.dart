@@ -6,9 +6,9 @@ mixin RxUpdatersMixin<T> on RxBase<T> {
   late final _updaters = RxUpdaters();
 
   @override
-  T get value {
+  T get valueR {
     RxNotifier.pullObservers(_updaters);
-    return super.valueRaw;
+    return super.value;
   }
 
   @override

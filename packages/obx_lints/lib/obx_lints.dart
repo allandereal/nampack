@@ -10,6 +10,7 @@ import 'package:analyzer/error/error.dart';
 import 'package:analyzer/error/listener.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
+import 'package:obx_lints/core/enum.dart';
 
 part 'src/obx_lint.dart';
 part 'src/rx_bool_lint.dart';
@@ -53,6 +54,7 @@ class _RxCustomLinter extends PluginBase {
   @override
   List<LintRule> getLintRules(CustomLintConfigs configs) {
     return [
+      const _ObxNoGetterLintRule(),
       const _ObxLintRule(),
       const _RxBoolLintRule(),
     ];

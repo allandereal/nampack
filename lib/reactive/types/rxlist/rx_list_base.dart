@@ -9,13 +9,13 @@ part 'rx_list_extensions.dart';
 abstract class RxListBase<E> extends RxBase<List<E>> with ListMixin<E> {
   RxListBase(super._value);
 
-  List<E> get _value => super.valueRaw;
+  List<E> get _value => super.value;
 
   @override
-  int get length => value.length;
+  int get length => valueR.length;
 
   @override
-  E operator [](int index) => value[index];
+  E operator [](int index) => valueR[index];
 
   @override
   void operator []=(int index, E value) {
@@ -73,10 +73,10 @@ abstract class RxListBase<E> extends RxBase<List<E>> with ListMixin<E> {
   }
 
   @override
-  Iterable<E> where(bool Function(E element) test) => value.where(test);
+  Iterable<E> where(bool Function(E element) test) => valueR.where(test);
 
   @override
-  Iterable<T> whereType<T>() => value.whereType<T>();
+  Iterable<T> whereType<T>() => valueR.whereType<T>();
 
   @override
   void sort([int Function(E a, E b)? compare]) {
