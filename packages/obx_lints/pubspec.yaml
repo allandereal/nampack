@@ -1,0 +1,15 @@
+name: obx_lints
+description: A sample command-line application.
+version: 1.0.5
+
+environment:
+  sdk: "3.4.0"
+
+dependencies:
+  analyzer:
+  analyzer_plugin:
+  custom_lint_builder:
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.0

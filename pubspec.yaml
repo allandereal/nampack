@@ -1,6 +1,6 @@
 name: nampack
 description: "Simple reactive library with useful extensions"
-version: 0.6.0
+version: 0.7.0
 homepage:
 publish_to: none
 
@@ -19,5 +19,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  custom_lint:
+  obx_lints:
+    path: ./packages/obx_lints
 
 flutter:
