@@ -130,7 +130,7 @@ bool _isWithinWidgetOrGetter(AstNode node, String widgetName, {bool catchGetter 
   bool alreadyHadFunction = false;
   var parent = node.parent;
   while (parent != null) {
-    if (catchGetter && parent is FunctionDeclaration && parent.isGetter) return true;
+    if (catchGetter && parent.checkGetter()) return true;
 
     if (parent is FunctionExpression) {
       if (alreadyHadFunction) {
@@ -178,5 +178,14 @@ void _fixObxLint({
         builder.addSimpleReplacement(SourceRange(other.sourceRange.end - nameLength, nameLength), replaceWith);
       }
     });
+  }
+}
+
+extension _GetterDetector on AstNode {
+  bool checkGetter() {
+    final node = this;
+    if (node is MethodDeclaration && node.isGetter) return true;
+    if (node is FunctionDeclaration && node.isGetter) return true;
+    return false;
   }
 }
