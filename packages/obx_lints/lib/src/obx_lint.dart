@@ -20,8 +20,9 @@ class _ObxLintRule extends DartLintRule {
       final report = _canReport(
         node: node,
         getterName: 'valueR',
+        catchGetter: true,
         goodRx: (hasRxMixin) => hasRxMixin,
-        goodObx: (hasObxParent) => !hasObxParent,
+        goodObxOrGetter: (hasObxParentOrIsGetter) => !hasObxParentOrIsGetter,
       );
       if (report) reporter.reportErrorForNode(code, node);
     });
@@ -72,7 +73,8 @@ class _ObxNoGetterLintRule extends DartLintRule {
         node: node,
         getterName: 'value',
         goodRx: (hasRxMixin) => hasRxMixin,
-        goodObx: (hasObxParent) => hasObxParent,
+        catchGetter: false,
+        goodObxOrGetter: (hasObxParentOrIsGetter) => hasObxParentOrIsGetter,
       );
       if (report) reporter.reportErrorForNode(code, node);
     });
@@ -107,8 +109,9 @@ class _ObxNoGetterLintFix extends DartFix {
 bool _canReport({
   required PrefixedIdentifier node,
   required String getterName,
+  required bool catchGetter,
   required bool Function(bool hasRxMixin) goodRx,
-  required bool Function(bool hasObxParent) goodObx,
+  required bool Function(bool hasObxParentOrIsGetter) goodObxOrGetter,
 }) {
   final getter = node.identifier.name;
   if (getter == getterName && node.identifier.inGetterContext()) {
@@ -116,17 +119,19 @@ bool _canReport({
     final element = parentType?.element;
     final hasRxUpdater = _RxCustomLinter.hasRxUpdaterMixin(element);
     if (!goodRx(hasRxUpdater)) return false;
-    final withinObx = _isWithinWidget(node, 'Obx');
-    if (!goodObx(withinObx)) return false;
+    final withinObxOrGetter = _isWithinWidgetOrGetter(node, 'Obx', catchGetter: catchGetter);
+    if (!goodObxOrGetter(withinObxOrGetter)) return false;
     return true;
   }
   return false;
 }
 
-bool _isWithinWidget(AstNode node, String widgetName) {
+bool _isWithinWidgetOrGetter(AstNode node, String widgetName, {bool catchGetter = true}) {
   bool alreadyHadFunction = false;
   var parent = node.parent;
   while (parent != null) {
+    if (catchGetter && parent is FunctionDeclaration && parent.isGetter) return true;
+
     if (parent is FunctionExpression) {
       if (alreadyHadFunction) {
         break;
