@@ -30,24 +30,38 @@ class _RxCustomLinter extends PluginBase {
     return hasSuperType(parentElement, 'RxBase');
   }
 
+  static bool _checkGoodType(InterfaceType type, String name) {
+    return type.getDisplayString(withNullability: false).startsWith(name);
+  }
+
   static bool hasSuperType(Element? parentElement, String mixinName) {
+    InterfaceType? supertype;
     List<InterfaceType>? supertypes;
-    if (parentElement is InterfaceElement) {
+    if (parentElement is ClassElement) {
+      if (_checkGoodType(parentElement.thisType, mixinName)) return true;
       supertypes = parentElement.allSupertypes;
+      supertype = parentElement.supertype;
+    } else if (parentElement is InterfaceElement) {
+      supertypes = parentElement.allSupertypes;
+      supertype = parentElement.supertype;
     } else if (parentElement is LocalVariableElement) {
       if (parentElement.type is InterfaceType) {
-        supertypes = (parentElement.type as InterfaceType).allSupertypes;
+        final e = parentElement.type as InterfaceType;
+        supertype = e;
+        supertypes = e.allSupertypes;
       }
     }
+    if (supertype != null && _checkGoodType(supertype, mixinName)) return true;
     if (supertypes != null) {
       final length = supertypes.length;
       for (int i = 0; i < length; i++) {
         final supertype = supertypes[i];
-        if (supertype.getDisplayString(withNullability: false).startsWith(mixinName)) {
+        if (_checkGoodType(supertype, mixinName)) {
           return true;
         }
       }
     }
+
     return false;
   }
 
