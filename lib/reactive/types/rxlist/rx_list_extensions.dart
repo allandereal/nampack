@@ -1,5 +1,70 @@
 part of 'rx_list_base.dart';
 
+extension RxListExtensionsBase<E, Id> on RxListBase<E> {
+  bool get isEmpty => valueR.isEmpty;
+
+  bool get isNotEmpty => valueR.isNotEmpty;
+
+  int get length => valueR.length;
+
+  E operator [](int index) => valueR[index];
+
+  void operator []=(int index, E value) {
+    _value[index] = value;
+    refresh();
+  }
+
+  set length(int newLength) {
+    _value.length = newLength;
+    refresh();
+  }
+
+  void add(E element) {
+    _value.add(element);
+    refresh();
+  }
+
+  void addAll(Iterable<E> iterable) {
+    _value.addAll(iterable);
+    refresh();
+  }
+
+  void insert(int index, E element) {
+    _value.insert(index, element);
+    refresh();
+  }
+
+  void insertAll(int index, Iterable<E> iterable) {
+    _value.insertAll(index, iterable);
+    refresh();
+  }
+
+  bool remove(Object? element) {
+    final removed = _value.remove(element);
+    refresh();
+    return removed;
+  }
+
+  void removeWhere(bool Function(E element) test) {
+    _value.removeWhere(test);
+    refresh();
+  }
+
+  void retainWhere(bool Function(E element) test) {
+    _value.retainWhere(test);
+    refresh();
+  }
+
+  Iterable<E> where(bool Function(E element) test) => valueR.where(test);
+
+  Iterable<T> whereType<T>() => valueR.whereType<T>();
+
+  void sort([int Function(E a, E b)? compare]) {
+    _value.sort(compare);
+    refresh();
+  }
+}
+
 extension RxListExtensions<E, Id> on RxListBase<E> {
   void assign(E element) {
     _value.assign(element);

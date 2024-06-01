@@ -1,5 +1,29 @@
 part of 'rx_map_base.dart';
 
+extension RxMapExtensionsBase<K, V> on RxMapBase<K, V> {
+  int get length => valueR.length;
+
+  V? operator [](Object? key) => valueR[key];
+
+  void operator []=(K key, V value) {
+    _value[key] = value;
+    refresh();
+  }
+
+  Iterable<K> get keys => valueR.keys;
+
+  void clear() {
+    _value.clear();
+    refresh();
+  }
+
+  V? remove(Object? key) {
+    final removed = _value.remove(key);
+    refresh();
+    return removed;
+  }
+}
+
 extension RxMapExtensions<K, V> on RxMapBase<K, V> {
   void assign(K key, V value) {
     _value.assign(key, value);
