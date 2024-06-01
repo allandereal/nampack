@@ -1,11 +1,6 @@
 part of 'rx_map_base.dart';
 
 extension RxMapExtensions<K, V> on RxMapBase<K, V> {
-  void execute(void Function(Map<K, V> value) fn) {
-    fn(_value);
-    refresh();
-  }
-
   void assign(K key, V value) {
     _value.assign(key, value);
     refresh();

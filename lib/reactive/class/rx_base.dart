@@ -16,6 +16,11 @@ abstract class RxBase<T> implements Listenable {
     refresh();
   }
 
+  void execute(void Function(T value) fn) {
+    fn(_value);
+    refresh();
+  }
+
   void refresh();
   void close();
 

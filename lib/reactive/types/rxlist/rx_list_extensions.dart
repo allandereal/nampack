@@ -1,11 +1,6 @@
 part of 'rx_list_base.dart';
 
 extension RxListExtensions<E, Id> on RxListBase<E> {
-  void execute(void Function(List<E> value) fn) {
-    fn(_value);
-    refresh();
-  }
-
   void assign(E element) {
     _value.assign(element);
     refresh();
