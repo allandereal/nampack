@@ -7,13 +7,6 @@ extension RxListExtensionsBase<E, Id> on RxListBase<E> {
 
   int get length => valueR.length;
 
-  E operator [](int index) => valueR[index];
-
-  void operator []=(int index, E value) {
-    _value[index] = value;
-    refresh();
-  }
-
   set length(int newLength) {
     _value.length = newLength;
     refresh();
@@ -55,12 +48,31 @@ extension RxListExtensionsBase<E, Id> on RxListBase<E> {
     refresh();
   }
 
+  E removeLast() {
+    final res = _value.removeLast();
+    refresh();
+    return res;
+  }
+
+  E removeAt(int index) {
+    final res = _value.removeAt(index);
+    refresh();
+    return res;
+  }
+
   Iterable<E> where(bool Function(E element) test) => valueR.where(test);
 
   Iterable<T> whereType<T>() => valueR.whereType<T>();
 
+  bool contains(Object? element) => valueR.contains(element);
+
   void sort([int Function(E a, E b)? compare]) {
     _value.sort(compare);
+    refresh();
+  }
+
+  void clear() {
+    _value.clear();
     refresh();
   }
 }

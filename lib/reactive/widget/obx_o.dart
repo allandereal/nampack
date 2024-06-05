@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nampack/reactive/class/rx_base.dart';
 
 class ObxO<T> extends StatelessWidget {
-  final RxBase<T> rx;
+  final RxBaseCore<T> rx;
   final Widget Function(T value) builder;
 
   const ObxO({super.key, required this.rx, required this.builder});
@@ -16,7 +16,7 @@ class ObxO<T> extends StatelessWidget {
 }
 
 class ObxOContext<T> extends StatelessWidget {
-  final RxBase<T> rx;
+  final RxBaseCore<T> rx;
   final Widget Function(BuildContext context, T value) builder;
 
   const ObxOContext({super.key, required this.rx, required this.builder});
@@ -29,9 +29,8 @@ class ObxOContext<T> extends StatelessWidget {
 }
 
 class _RxOListenerBuilder<T> extends StatelessElement {
+  final RxBaseCore<T> rx;
   _RxOListenerBuilder(this.rx, super.widget);
-
-  final RxBase<T> rx;
 
   void _updateWidget() {
     if (mounted) {

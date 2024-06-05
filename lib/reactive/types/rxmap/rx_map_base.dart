@@ -4,8 +4,15 @@ import 'package:nampack/reactive/class/rx_base.dart';
 
 part 'rx_map_extensions.dart';
 
-abstract class RxMapBase<K, V> extends RxBase<Map<K, V>> {
+abstract class RxMapBase<K, V> extends RxBase<Map<K, V>> with RxExecuterMixin<Map<K, V>> {
   RxMapBase(super._value);
 
   Map<K, V> get _value => super.value;
+
+  V? operator [](Object? key) => valueR[key];
+
+  void operator []=(K key, V value) {
+    _value[key] = value;
+    refresh();
+  }
 }

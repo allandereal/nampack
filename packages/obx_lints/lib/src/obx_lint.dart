@@ -7,7 +7,7 @@ class _ObxLintRule extends DartLintRule {
 
   static const _code = LintCode(
     name: 'avoid_rx_value_getter_outside_obx',
-    problemMessage: 'Do not access `valueR` outside `Obx()`, use `value` instead.',
+    problemMessage: 'Do not access `valueR` outside `Obx()`, use `value` instead, or expose as RxBaseCore<T>.',
     errorSeverity: ErrorSeverity.WARNING,
   );
 
@@ -22,7 +22,7 @@ class _ObxLintRule extends DartLintRule {
         reporter,
         code,
         getterNameRequired: 'valueR',
-        catchGetter: true,
+        allowGetter: false,
         goodRx: (hasRxMixin) => hasRxMixin,
         goodObxOrGetter: (hasObxParentOrIsGetter) => !hasObxParentOrIsGetter,
       );
@@ -34,7 +34,7 @@ class _ObxLintRule extends DartLintRule {
         reporter,
         code,
         getterNameRequired: 'valueR',
-        catchGetter: true,
+        allowGetter: false,
         goodRx: (hasRxMixin) => hasRxMixin,
         goodObxOrGetter: (hasObxParentOrIsGetter) => !hasObxParentOrIsGetter,
       );
@@ -85,7 +85,7 @@ class _ObxNoGetterLintRule extends DartLintRule {
 
   static const _code = LintCode(
     name: 'non_reactive_value_inside_obx',
-    problemMessage: '`value` is accessed inside `Obx()` but `value` is non reactive, use `valueR` instead.',
+    problemMessage: '`value` is accessed inside `Obx()` but `value` is non reactive, use `valueR` instead, or expose as RxBaseCore<T>.',
     errorSeverity: ErrorSeverity.WARNING,
   );
 
@@ -98,9 +98,9 @@ class _ObxNoGetterLintRule extends DartLintRule {
       _ObxUtilsMain.onPropertyAdd(
         node,
         reporter,
-        code,
+        _code,
         getterNameRequired: 'value',
-        catchGetter: false,
+        allowGetter: null,
         goodRx: (hasRxMixin) => hasRxMixin,
         goodObxOrGetter: (hasObxParentOrIsGetter) => hasObxParentOrIsGetter,
       );
@@ -111,9 +111,9 @@ class _ObxNoGetterLintRule extends DartLintRule {
         _ObxUtilsMain.onPrefixedAdd(
           node,
           reporter,
-          code,
+          _code,
           getterNameRequired: 'value',
-          catchGetter: false,
+          allowGetter: null,
           goodRx: (hasRxMixin) => hasRxMixin,
           goodObxOrGetter: (hasObxParentOrIsGetter) => hasObxParentOrIsGetter,
         );
@@ -183,7 +183,7 @@ class _ObxUtilsMain {
     ErrorReporter reporter,
     LintCode code, {
     required String getterNameRequired,
-    required bool catchGetter,
+    required bool? allowGetter,
     required bool Function(bool hasRxMixin) goodRx,
     required bool Function(bool hasObxParentOrIsGetter) goodObxOrGetter,
   }) {
@@ -194,7 +194,7 @@ class _ObxUtilsMain {
       report = _ObxUtils._canReportProperty(
         node: realTarget,
         getterNameRequired: getterNameRequired,
-        catchGetter: catchGetter,
+        allowGetter: allowGetter,
         goodRx: (hasRxMixin) => hasRxMixin,
         goodObxOrGetter: (hasObxParentOrIsGetter) => !hasObxParentOrIsGetter,
       );
@@ -207,11 +207,11 @@ class _ObxUtilsMain {
       if (rxElement != null) {
         report = _ObxUtils._canReport(
           node: node,
-          inGetterContext: true, // TODO
+          inGetterContext: true,
           element: rxElement,
           nodeGetter: node.propertyName.name,
           getterNameRequired: getterNameRequired,
-          catchGetter: catchGetter,
+          allowGetter: allowGetter,
           goodRx: goodRx,
           goodObxOrGetter: goodObxOrGetter,
         );
@@ -226,7 +226,7 @@ class _ObxUtilsMain {
     ErrorReporter reporter,
     LintCode code, {
     required String getterNameRequired,
-    required bool catchGetter,
+    required bool? allowGetter,
     required bool Function(bool hasRxMixin) goodRx,
     required bool Function(bool hasObxParentOrIsGetter) goodObxOrGetter,
   }) {
@@ -234,7 +234,7 @@ class _ObxUtilsMain {
       node: node,
       nodeGetter: node.identifier.name,
       getterNameRequired: getterNameRequired,
-      catchGetter: catchGetter,
+      allowGetter: allowGetter,
       goodRx: goodRx,
       goodObxOrGetter: goodObxOrGetter,
     );
@@ -247,16 +247,16 @@ class _ObxUtils {
     required PrefixedIdentifier node,
     required String nodeGetter,
     required String getterNameRequired,
-    required bool catchGetter,
+    required bool? allowGetter,
     required bool Function(bool hasRxMixin) goodRx,
     required bool Function(bool hasObxParentOrIsGetter) goodObxOrGetter,
   }) {
-    if (nodeGetter == getterNameRequired && node.identifier.inGetterContext()) {
+    if (nodeGetter == getterNameRequired && (node.identifier.inGetterContext())) {
       bool hasRxUpdater;
       hasRxUpdater = _RxCustomLinter.hasRxUpdaterMixin(node.staticType?.element);
       if (!hasRxUpdater) hasRxUpdater = _RxCustomLinter.hasRxUpdaterMixin(node.prefix.staticType?.element);
       if (!goodRx(hasRxUpdater)) return false;
-      final withinObxOrGetter = _isWithinWidgetOrGetter(node, 'Obx', catchGetter: catchGetter);
+      final withinObxOrGetter = _isWithinWidgetOrGetter(node, 'Obx', allowGetter: allowGetter);
       if (!goodObxOrGetter(withinObxOrGetter)) return false;
       return true;
     }
@@ -269,14 +269,14 @@ class _ObxUtils {
     required Element element,
     required String nodeGetter,
     required String getterNameRequired,
-    required bool catchGetter,
+    required bool? allowGetter,
     required bool Function(bool hasRxMixin) goodRx,
     required bool Function(bool hasObxParentOrIsGetter) goodObxOrGetter,
   }) {
     if (nodeGetter == getterNameRequired && inGetterContext) {
       final hasRxUpdater = _RxCustomLinter.hasRxUpdaterMixin(element);
       if (!goodRx(hasRxUpdater)) return false;
-      final withinObxOrGetter = _isWithinWidgetOrGetter(node, 'Obx', catchGetter: catchGetter);
+      final withinObxOrGetter = _isWithinWidgetOrGetter(node, 'Obx', allowGetter: allowGetter);
       if (!goodObxOrGetter(withinObxOrGetter)) return false;
       return true;
     }
@@ -286,7 +286,7 @@ class _ObxUtils {
   static bool _canReportProperty({
     required PropertyAccess node,
     required String getterNameRequired,
-    required bool catchGetter,
+    required bool? allowGetter,
     required bool Function(bool hasRxMixin) goodRx,
     required bool Function(bool hasObxParentOrIsGetter) goodObxOrGetter,
   }) {
@@ -311,18 +311,18 @@ class _ObxUtils {
       final element = parentType?.element;
       final hasRxUpdater = _RxCustomLinter.hasRxUpdaterMixin(element);
       if (!goodRx(hasRxUpdater)) return false;
-      final withinObxOrGetter = _isWithinWidgetOrGetter(node, 'Obx', catchGetter: catchGetter);
+      final withinObxOrGetter = _isWithinWidgetOrGetter(node, 'Obx', allowGetter: allowGetter);
       if (!goodObxOrGetter(withinObxOrGetter)) return false;
       return true;
     }
     return false;
   }
 
-  static bool _isWithinWidgetOrGetter(AstNode node, String widgetName, {bool catchGetter = true}) {
+  static bool _isWithinWidgetOrGetter(AstNode node, String widgetName, {bool? allowGetter}) {
     bool alreadyHadFunction = false;
     var parent = node.parent;
     while (parent != null) {
-      if (catchGetter && parent.checkGetter()) return false;
+      if (allowGetter != null && parent.checkGetter()) return allowGetter;
 
       if (parent is FunctionExpression) {
         if (alreadyHadFunction) {

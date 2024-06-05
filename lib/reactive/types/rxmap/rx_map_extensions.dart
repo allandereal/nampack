@@ -3,14 +3,15 @@ part of 'rx_map_base.dart';
 extension RxMapExtensionsBase<K, V> on RxMapBase<K, V> {
   int get length => valueR.length;
 
-  V? operator [](Object? key) => valueR[key];
-
-  void operator []=(K key, V value) {
-    _value[key] = value;
-    refresh();
-  }
-
   Iterable<K> get keys => valueR.keys;
+
+  Iterable<V> get values => valueR.values;
+
+  Iterable<MapEntry<K, V>> get entries => valueR.entries;
+
+  bool get isEmpty => valueR.isEmpty;
+
+  bool get isNotEmpty => valueR.isNotEmpty;
 
   void clear() {
     _value.clear();
@@ -21,6 +22,51 @@ extension RxMapExtensionsBase<K, V> on RxMapBase<K, V> {
     final removed = _value.remove(key);
     refresh();
     return removed;
+  }
+
+  void forEach(void Function(K key, V value) action) {
+    _value.forEach(action);
+    refresh();
+  }
+
+  Map<RK, RV> cast<RK, RV>() => _value.cast<RK, RV>();
+
+  bool containsKey(Object? key) => _value.containsKey(key);
+
+  bool containsValue(Object? value) => _value.containsValue(value);
+
+  Map<K2, V2> map<K2, V2>(MapEntry<K2, V2> Function(K key, V value) convert) => _value.map(convert);
+
+  void addAll(Map<K, V> other) {
+    _value.addAll(other);
+    refresh();
+  }
+
+  void addEntries(Iterable<MapEntry<K, V>> newEntries) {
+    _value.addEntries(newEntries);
+    refresh();
+  }
+
+  V update(K key, V Function(V value) update, {V Function()? ifAbsent}) {
+    final res = _value.update(key, update);
+    refresh();
+    return res;
+  }
+
+  void updateAll(V Function(K key, V value) update) {
+    _value.updateAll(update);
+    refresh();
+  }
+
+  void removeWhere(bool Function(K key, V value) test) {
+    _value.removeWhere(test);
+    refresh();
+  }
+
+  V putIfAbsent(K key, V Function() ifAbsent) {
+    final res = _value.putIfAbsent(key, ifAbsent);
+    refresh();
+    return res;
   }
 }
 

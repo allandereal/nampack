@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'package:nampack/core/main_utils.dart';
 import 'package:nampack/snackbar/snackbars_manager.dart';
@@ -172,6 +173,7 @@ class SnackbarController {
     }
 
     _overlayEntry?.remove();
+    SchedulerBinding.instance.addPostFrameCallback((_) => _overlayEntry?.dispose());
     _overlayEntry = null;
     _controller.dispose();
   }

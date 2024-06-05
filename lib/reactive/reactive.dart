@@ -1,3 +1,4 @@
+export 'class/rx_base.dart';
 export 'class/rx.dart';
 export 'class/rxn.dart';
 export 'extensions.dart';
