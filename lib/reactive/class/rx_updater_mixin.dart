@@ -26,8 +26,7 @@ mixin RxOUpdatersMixin<T> on RxBase<T> {
 
   @override
   void refresh() {
-    assert(_checkNotDisposed());
-    _updaters!.notifyAll();
+    _updaters?.notifyAll();
   }
 
   @override
