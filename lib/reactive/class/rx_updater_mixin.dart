@@ -20,8 +20,7 @@ mixin RxOUpdatersMixin<T> on RxBase<T> {
 
   @override
   void removeListener(NamCallback listener) {
-    assert(_checkNotDisposed());
-    _updaters!.remove(listener);
+    _updaters?.remove(listener);
   }
 
   @override
