@@ -2,6 +2,21 @@ import 'package:flutter/material.dart';
 
 import 'package:nampack/reactive/class/rx_base.dart';
 
+/// Listens to a reactive class and callback builder with the main listenable.
+class ObxOClass<C extends RxBaseCore<T>, T> extends StatelessWidget {
+  final C rx;
+  final Widget Function(C object) builder;
+
+  const ObxOClass({super.key, required this.rx, required this.builder});
+
+  @override
+  StatelessElement createElement() => _RxOListenerBuilder(rx, this);
+
+  @override
+  Widget build(BuildContext context) => builder(rx);
+}
+
+/// Listens to a reactive class and callback builder with the value inside.
 class ObxO<T> extends StatelessWidget {
   final RxBaseCore<T> rx;
   final Widget Function(T value) builder;
@@ -15,6 +30,17 @@ class ObxO<T> extends StatelessWidget {
   Widget build(BuildContext context) => builder(rx.value);
 }
 
+/// Same as [ObxO] with additional context parameter in the callback.
+///
+/// equivalent to:
+/// ```dart
+/// Builder(
+///   builder: (context) => ObxO(
+///     rx: rx,
+///     builder: (value) => child,
+///   ),
+/// );
+/// ```
 class ObxOContext<T> extends StatelessWidget {
   final RxBaseCore<T> rx;
   final Widget Function(BuildContext context, T value) builder;
