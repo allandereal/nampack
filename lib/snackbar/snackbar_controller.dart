@@ -42,12 +42,14 @@ class SnackbarController {
 
   void _showOverlay(BuildContext? overlayContext) {
     if (overlayContext != null) _overlayState = Overlay.of(overlayContext);
-    _overlayEntry = _createOverlayEntry(snackbar);
-    _overlayState.insert(_overlayEntry!);
 
     _controller = _createAnimationController();
     _animation = _createAnimation(snackbar.top);
     _animation.addStatusListener(_handleStatusChanged);
+
+    _overlayEntry = _createOverlayEntry(snackbar);
+    _overlayState.insert(_overlayEntry!);
+
     _controller.forward();
     _initTimer();
     SnackbarManager.add(close);
