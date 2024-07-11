@@ -18,8 +18,6 @@ class SnackbarController {
 
   Timer? _closeTimer;
 
-  late final Animation<Alignment> _animation;
-
   late final AnimationController _controller;
 
   OverlayEntry? _overlayEntry;
@@ -43,12 +41,13 @@ class SnackbarController {
   void _showOverlay(BuildContext? overlayContext) {
     if (overlayContext != null) _overlayState = Overlay.of(overlayContext);
 
-    _controller = _createAnimationController();
-    _animation = _createAnimation(snackbar.top);
-    _animation.addStatusListener(_handleStatusChanged);
+    final animation = _createAnimation(snackbar.top);
+    animation.addStatusListener(_handleStatusChanged);
 
-    _overlayEntry = _createOverlayEntry(snackbar);
+    _overlayEntry = _createOverlayEntry(snackbar, animation);
     _overlayState.insert(_overlayEntry!);
+
+    _controller = _createAnimationController();
 
     _controller.forward();
     _initTimer();
@@ -92,14 +91,14 @@ class SnackbarController {
     );
   }
 
-  OverlayEntry _createOverlayEntry(Widget child) {
+  OverlayEntry _createOverlayEntry(Widget child, Animation<Alignment> animation) {
     return OverlayEntry(
       builder: (context) => Semantics(
         focused: false,
         container: true,
         explicitChildNodes: true,
         child: AlignTransition(
-          alignment: _animation,
+          alignment: animation,
           child: Builder(
             builder: (_) => Listener(
               onPointerDown: (_) => _cancelTimer(),
