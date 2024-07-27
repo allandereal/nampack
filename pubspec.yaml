@@ -11,9 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dart_extensions:
-    git:
-      url: https://github.com/MSOB7YY/dart_extensions
+  dart_extensions: 2.2.4
+#    git:
+#      url: https://github.com/MSOB7YY/dart_extensions
 
 dev_dependencies:
   flutter_test:
